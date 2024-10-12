@@ -33,7 +33,14 @@ function initMap() {
         map: map,
         title: 'Destination'
     });
+    showConfirmationMessage();
     startTracking();
+}
+
+function showConfirmationMessage() {
+    const notificationDiv = document.getElementById('notification');
+    notificationDiv.textContent = 'You will be reminded to get off at the right stop.';
+    notificationDiv.style.color = '#28a745'; // Green color for confirmation
 }
 
 function startTracking() {
