@@ -1,4 +1,5 @@
 let destinationLat, destinationLng;
+let watchId = null;
 
 document.getElementById('setLocation').addEventListener('click', function() {
     const locationInput = document.getElementById('locationInput').value;
@@ -37,18 +38,26 @@ function initMap() {
 
 function startTracking() {
     if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(function(position) {
+        watchId = navigator.geolocation.watchPosition(function(position) {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
             const distance = calculateDistance(userLat, userLng, destinationLat, destinationLng);
             if (distance <= 100) {
                 notifyUser();
+                stopTracking(); // Stop tracking once the notification is sent
             }
         }, function(error) {
             alert('Geolocation error: ' + error.message);
         });
     } else {
         alert('Geolocation is not supported by this browser.');
+    }
+}
+
+function stopTracking() {
+    if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
     }
 }
 
@@ -83,3 +92,9 @@ function notifyUser() {
         });
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+    }
+});
